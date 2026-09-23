@@ -1,0 +1,49 @@
+# Local development stack. Ports bind to 127.0.0.1 only.
+# For a public server use docker-compose.prod.yml via scripts/deploy-vps.sh.
+name: consultflow
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: consultflow
+      POSTGRES_PASSWORD: consultflow
+      POSTGRES_DB: consultflow
+    ports:
+      - "127.0.0.1:55432:5432" # host access for local development and integration tests
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U consultflow -d consultflow"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://consultflow:consultflow@db:5432/consultflow?sslmode=disable
+      ADDR: ":8081"
+    ports:
+      - "127.0.0.1:8081:8081"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/consultflow", "-healthcheck"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  frontend:
+    build:
+      context: ./frontend
+      target: local
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  dbdata:
