@@ -1,0 +1,58 @@
+# Secrets and local environment (only .env.example is tracked)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Let's Encrypt / certbot state if ever written to the working tree
+letsencrypt/
+certbot/
+
+# Dependencies
+node_modules/
+
+# Build output
+frontend/dist/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Go build and test artifacts
+/backend/consultflow
+/backend/bin/
+*.test
+*.out
+*.prof
+
+# Local database data (Compose uses named volumes; never commit a data dir)
+pgdata/
+postgres-data/
+*.dump
+*.sql.gz
+
+# Caches and tool output
+.cache/
+.vite/
+.eslintcache
+.playwright-mcp/
+playwright-report/
+test-results/
+
+# Logs and temporary files
+*.log
+npm-debug.log*
+tmp/
+*.tmp
+*.swp
+*~
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
